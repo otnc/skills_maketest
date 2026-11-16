@@ -101,11 +101,11 @@ npm run check
 ```
 
 :::kiritan{locale=en}
-To release, update the package version and lockfile together. After the changes are on the default branch, run the `release` workflow with the version from `package.json` (without the leading `v`).
+To release, open **Actions → release → Run workflow** on the default branch and enter the target version, such as `0.2.0`. The workflow updates `package.json` and `package-lock.json` with `npm version` and runs `npm run check`. If the checks pass, it commits any version changes to the default branch, pushes the `v0.2.0` tag, and publishes a GitHub Release. If both files already have the requested version, it skips the version commit.
 :::
 
 :::kiritan{locale=ja}
-リリースするときは、`package.json` とロックファイルのバージョンを更新します。変更をデフォルトブランチに反映したら、`package.json` のバージョンを先頭に `v` を付けずに指定して、`release` ワークフローを実行します。
+リリースするには、GitHub の **Actions → release → Run workflow** でデフォルトブランチを選び、`0.2.0` のように先頭に `v` を付けずにバージョンを入力します。ワークフローは `npm version` で `package.json` と `package-lock.json` を更新し、`npm run check` を実行します。チェックが通ると、バージョンの変更をデフォルトブランチにコミットして、`v0.2.0` のタグと GitHub Release を作成します。両ファイルに指定のバージョンが入っていれば、更新コミットは省略します。
 :::
 
 :::kiritan{locale=en}

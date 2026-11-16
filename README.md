@@ -47,7 +47,7 @@ npm run docs:build
 npm run check
 ```
 
-To release, update the package version and lockfile together. After the changes are on the default branch, run the `release` workflow with the version from `package.json` (without the leading `v`).
+To release, open **Actions → release → Run workflow** on the default branch and enter the target version, such as `0.2.0`. The workflow updates `package.json` and `package-lock.json` with `npm version` and runs `npm run check`. If the checks pass, it commits any version changes to the default branch, pushes the `v0.2.0` tag, and publishes a GitHub Release. If both files already have the requested version, it skips the version commit.
 
 ## References
 

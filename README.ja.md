@@ -47,7 +47,7 @@ npm run docs:build
 npm run check
 ```
 
-リリースするときは、`package.json` とロックファイルのバージョンを更新します。変更をデフォルトブランチに反映したら、`package.json` のバージョンを先頭に `v` を付けずに指定して、`release` ワークフローを実行します。
+リリースするには、GitHub の **Actions → release → Run workflow** でデフォルトブランチを選び、`0.2.0` のように先頭に `v` を付けずにバージョンを入力します。ワークフローは `npm version` で `package.json` と `package-lock.json` を更新し、`npm run check` を実行します。チェックが通ると、バージョンの変更をデフォルトブランチにコミットして、`v0.2.0` のタグと GitHub Release を作成します。両ファイルに指定のバージョンが入っていれば、更新コミットは省略します。
 
 ## 参考文献
 
