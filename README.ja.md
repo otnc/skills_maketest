@@ -1,39 +1,70 @@
-# Agent Skills source repository template
+# maketest
 
 [English](README.md) | **日本語**
 
-[otnc/agent-skills](https://github.com/otnc/agent-skills) に収録する公開リポジトリ `otnc/skills_<name>` のテンプレートです。
+CI の実行時間を抑えながら、意図しない挙動の変化を検出するテストを設計・作成する Agent Skill です。
 
-## リポジトリの作成
+## テストの作り方
 
-1. テンプレートを新しいリポジトリにコピーします。スキルのフォルダ名、`SKILL.md` の `name`、このファイルのインストール例にある `example-skill` を置き換えます。`package.json` のパッケージ名と説明も更新します。リポジトリ名とスキル名が違う場合は、インストール元にリポジトリ名、`--skill` にスキル名を指定してください。
-2. `LICENSE` の `[year]` と `[author]` を著作権表示の年と権利者名に置き換えます。`package.json` の `author` にはパッケージの著者名を設定します。
-3. `skills/<name>/SKILL.md` にスキルを書きます。`description` には、何ができて、どんな依頼で使うかを書きます。手順で参照する資料やスクリプト、素材があれば、スキルのフォルダ内に `references/`、`scripts/`、`assets/` を作ります。スキルを単体でインストールしても動くよう、必要なファイルは同じフォルダ内に置きます。
-4. `base/README.base.md` を新しいスキルの使い方に合わせて書き換えます。以下のコマンドを実行し、生成した README とロックファイルをコミットします。
+エージェントが次のルールに沿ってテストを設計し、プロジェクトで使っているテストランナーで検証します。
+
+- **仕様から期待結果を決める。** 仕様や合意した例、インターフェースの契約を根拠にします。リファクタリング前に仕様書にない挙動を固定するときは、現状の挙動を記録するテストだと明記します。
+- **リスクに応じてケースを選ぶ。** 利用者に影響する境界値、エラー、状態の変化を確認します。同じリスクを既存のテストで確認できるなら、そのテストを活用します。
+- **不具合を検出できる最も速いテストを選ぶ。** 業務ルールは単体テストで確認し、データの保存などは結合テストで確かめます。E2E テストはシステム全体を通す必要がある操作に絞ります。
+- **どんな不具合でテストが失敗するかを確かめる。** 回帰テストでは、可能なら不具合のある旧版と修正版で同じテストを実行します。実行できた確認と未検証の項目を報告します。
+
+## インストール
+
+公開済みのリポジトリからインストールするには、次のコマンドを実行します。
 
 ```sh
-npm install
+npx skills add otnc/skills_maketest --skill maketest
+```
+
+手元にチェックアウトしたスキルを試すには、リポジトリのルートで次のコマンドを実行します。
+
+```sh
+npx skills add . --skill maketest
+```
+
+## 使い方
+
+エージェントにテストの追加や設計を依頼します。スキルを明示的に選べるクライアントでは、`$maketest` でも呼び出せます。
+
+- 「Issue #42 の回帰テストを書いて。修正前は失敗し、修正後は成功することを確認して。」
+- 「この料金ルールのテストケースを設計して。既存の E2E テストと重複しないように、重要な境界値を押さえて。」
+- 「リファクタリング前に、現在の CSV 出力をテストで固定して。たまたまそうなっているように見える挙動があれば教えて。」
+
+[スキル本文](skills/maketest/SKILL.md)では、TDD、受け入れテスト、仕様に基づくテスト設計、契約テスト、ドメインルールの検証、回帰テスト、既存の挙動を固定するテストを扱います。
+
+## 開発
+
+開発には `.node-version` に記載されたバージョンの Node.js を使います。README を更新するには、`base/README.base.md` を編集してから次のコマンドで生成・検証します。
+
+```sh
+npm ci
 npm run docs:build
 npm run check
 ```
 
-開発には `.node-version` に記載した Node.js を使います。初回のセットアップ後は、`npm ci` でロックファイルどおりに依存関係をインストールできます。
+リリースするときは、`package.json` とロックファイルのバージョンを更新します。変更をデフォルトブランチに反映したら、`package.json` のバージョンを先頭に `v` を付けずに指定して、`release` ワークフローを実行します。
 
-## インストール
+## 参考文献
 
-GitHub で配布元リポジトリを公開したら、そこから直接インストールできます。`agent-skills` に同期されたあとは、集約先からもインストールできます。
+- [Kent Beck, Canon TDD](https://newsletter.kentbeck.com/p/canon-tdd)
+- [ISTQB, Certified Tester Foundation Level Syllabus v4.0.1](https://istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf)
+- [NIST, Practical Combinatorial Testing](https://csrc.nist.gov/pubs/sp/800/142/final)
+- [Cucumber, Example Mapping](https://cucumber.io/docs/bdd/example-mapping/)
+- [Pact, Testing Scope](https://docs.pact.io/getting_started/testing-scope)
+- [Software Engineering at Google, Testing Overview](https://abseil.io/resources/swe-book/html/ch11.html) and [Test Doubles](https://abseil.io/resources/swe-book/html/ch13.html)
+- [Inozemtseva and Holmes, Coverage Is Not Strongly Correlated with Test Suite Effectiveness](https://cs.uwaterloo.ca/~m2nagapp/courses/CS846/1171/papers/inozemtseva_icse14.pdf)
+- [Petrović et al., Practical Mutation Testing at Scale](https://arxiv.org/abs/2102.11378)
+- [Lam et al., A Large-Scale Longitudinal Study of Flaky Tests](https://cs.stanford.edu/~anjiang/papers/LamETAL20LongitudinalFlakyTests.pdf)
+- [AIにテストを書かせると、決まって同じ場所が抜ける（Qiita）](https://qiita.com/suwa_nobu/items/a0fa9752528e2b3def71)
+- [カバレッジ 99% のテストに mutation testing をかけたら、監査ログの穴が見つかった（Qiita）](https://qiita.com/SeckeyJP/items/b136d6d0bb2d830fb508)
+- [AIでユニットテストも結合テストも書かせて全pass。でもだめだった。（Zenn）](https://zenn.dev/ryuka_lucas/articles/agent-teams-test-it-validation)
+- [AIが書いたテスト24件、バグありアプリで全部『成功』。直したら9件『失敗』した（Zenn）](https://zenn.dev/sumumu26/articles/b1afde3b0e06f2)
 
-```sh
-npx skills@latest add otnc/skills_example-skill --skill example-skill
-npx skills@latest add otnc/agent-skills --skill example-skill
-```
-
-## リリース
-
-次回以降のリリースでは、`npm version patch --no-git-tag-version` などでバージョンを更新します。変更をデフォルトブランチにプッシュし、そのブランチを選んで **Actions → release → Run workflow** を開きます。`version` には `package.json` と同じ値を `v` を付けずに入力します。初回なら `0.1.0` です。CI と同じチェックが通り、入力値が `package.json` と一致したら、`v<version>` タグとコミット履歴から作ったリリースノートを付けて GitHub Release を公開します。
-
-公開の `otnc/skills_*` リポジトリは、安定版リリースの公開後に [agent-skills の同期処理](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.ja.md) で検出されます。
-
-## License
+## ライセンス
 
 [MIT](LICENSE)
